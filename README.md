@@ -5,20 +5,20 @@ If it happens to notice a `movie` or `episode` to be playing it sets your Discor
 You can even have this running in the background, if no media is detected it removes the Discord Rich Presence, and once media detected again, reconnects the Discord Rich Presence.
 
 # Examples:  
-###Movie is playing  
+### Movie is playing  
 ![While playing](example_images/playing.png)
 
-###Movie is paused  
+### Movie is paused  
 ![While paused](example_images/paused.png)
 
-###TV Show is playing  
+### TV Show is playing  
 ![While playing](example_images/show_playing.png)
 
-###TV Show is paused  
+### TV Show is paused  
 ![While paused](example_images/show_paused.png)
 
 
-#Thanks
+# Thanks
 Kodi icon used: [Papyrus Development Team](https://github.com/PapirusDevelopmentTeam)  
 Inspiration: [DCustomRPC](https://github.com/JakeMakesStuff/DCustomRPC)
 
