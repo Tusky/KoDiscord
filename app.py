@@ -46,7 +46,7 @@ class App:
             time_format = '{time[0]}:{time[1]:02d}:{time[2]:02d}'
             formatted_time = time_format.format(time=play_info['current_time'])
             formatted_total_time = time_format.format(time=play_info['total_time'])
-            discord.update_status(details='{title}'.format(**play_info),
+            discord.update_status(details='{title}'.format(**play_info), large_image=play_info['type'],
                                   state='{icon} {time}/{total_time}'.format(icon=icon, time=formatted_time,
                                                                             total_time=formatted_total_time))
         else:

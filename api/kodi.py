@@ -8,6 +8,7 @@ class Kodi:
     year = None
     playing = False
     failed_connection = False
+    type = None
 
     def __init__(self, ip: str, port: int = 8080):
         self._ip = ip
@@ -22,6 +23,7 @@ class Kodi:
         self.title = None
         self.year = None
         self.playing = False
+        self.type = None
 
     def update_stream_information(self):
         """
@@ -95,12 +97,12 @@ class Kodi:
                     self.playing = j['result']['speed'] == 1
                 elif j['id'] == 'video':
                     item = j['result']['item']
+                    self.type = item['type']
+                    self.year = item['year']
                     if item['type'] == 'movie':
                         self.title = '{title} ({year})'.format(**item)
-                        self.year = item['year']
                     elif item['type'] == 'episode':
                         self.title = '{showtitle} {season}x{episode:02d}'.format(**item)
-                        self.year = item['year']
                     elif item['type'] == 'unknown':
                         self.set_default()
                     else:
