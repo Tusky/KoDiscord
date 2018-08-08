@@ -98,7 +98,7 @@ class Kodi:
                 elif j['id'] == 'video':
                     item = j['result']['item']
                     self.type = item['type']
-                    self.year = item['year']
+                    self.year = item.get('year', None)
                     if item['type'] == 'movie':
                         self.title = '{title} ({year})'.format(**item)
                     elif item['type'] == 'episode':
