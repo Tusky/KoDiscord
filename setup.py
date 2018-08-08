@@ -1,5 +1,6 @@
-from cx_Freeze import setup, Executable
 import os.path
+
+from cx_Freeze import setup, Executable
 
 PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
 os.environ['TCL_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tcl8.6')
@@ -13,13 +14,14 @@ packages = ['asyncio', 'idna', 'pypresence', 'requests', 'threading', 'typing', 
 options = {
     'build_exe': {
         'packages': packages,
+        'include_files': ['kodi-icon.ico', 'LICENSE', 'config.json']
     },
 }
 
 setup(
     name="KoDiscord",
     options=options,
-    version="0.1",
+    version="0.2b",
     description='Sends your currently watched Movie or TV Show from Kodi to discord.',
     executables=executables
 )
