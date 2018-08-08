@@ -99,7 +99,6 @@ class Kodi:
                         self.title = '{title} ({year})'.format(**item)
                         self.year = item['year']
                     elif item['type'] == 'episode':
-                        print(item)
                         self.title = '{showtitle} {season}x{episode:02d}'.format(**item)
                         self.year = item['year']
                     elif item['type'] == 'unknown':
