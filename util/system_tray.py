@@ -7,7 +7,7 @@ from PIL import Image
 # Load only for type checking to bypass circular reference error.
 if TYPE_CHECKING:
     from app import App
-    from config import Configurations
+    from util.config import Configurations
 
 
 class SysTray(threading.Thread):
