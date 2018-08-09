@@ -6,7 +6,8 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Tusky/KoDiscord/graphs/commit-activity)
 [![Documentation Status](https://readthedocs.org/projects/kodiscord/badge/?version=latest&style=flat)](http://kodiscord.readthedocs.io/?badge=latest)
-[![GitHub version](https://badge.fury.io/gh/Tusky%2fKoDiscord.svg)](https://github.com/Tusky/KoDiscord)
+
+[![GitHub release](https://img.shields.io/github/release/Tusky/KoDiscord.svg?style=flat-square)](https://github.com/Tusky/KoDiscord)
 [![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 
 This small application sits in your system tray, and watches Kodi's currently played media.
