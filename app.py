@@ -2,7 +2,7 @@ import time
 
 from api.discord_presence import DiscordPresence
 from api.kodi import Kodi
-from config import Configurations
+from util.config import Configurations
 from util.system_tray import SysTray
 
 running = True
@@ -29,7 +29,8 @@ class App:
         :return: new Kodi instance
         :rtype: Kodi
         """
-        return Kodi(self._config.kodi_ip, self._config.kodi_port)
+        return Kodi(self._config.kodi_ip, self._config.kodi_port, self._config.kodi_username,
+                    self._config.kodi_password)
 
     def update_discord(self, discord: DiscordPresence, play_info: dict):
         """

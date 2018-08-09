@@ -1,4 +1,7 @@
 # KoDiscord
+
+|docs|
+
 This small application sits in your system tray, and watches Kodi's currently played media.
 If it happens to notice a `movie` or `episode` to be playing it sets your Discord status to `movie` or `episode`.
 
@@ -25,3 +28,8 @@ Inspiration: [DCustomRPC](https://github.com/JakeMakesStuff/DCustomRPC)
 # Contributions
 Are most welcome, feel free to create a Pull Request or create a new issue if you have one.  
 I'll try and maintain this repository as long as I can and needed.
+
+.. |docs| image:: https://readthedocs.org/projects/kodiscord/badge/?version=latest&style=for-the-badge
+    :alt: Documentation Status
+    :scale: 100%
+    :target: https://kodiscord.readthedocs.io/en/latest/?badge=latest

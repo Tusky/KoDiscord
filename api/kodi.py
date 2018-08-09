@@ -1,4 +1,8 @@
+from json import JSONDecodeError
+
 import requests
+
+from util.error_handling import ErrorHandler
 
 
 class Kodi:
@@ -10,9 +14,11 @@ class Kodi:
     failed_connection = False
     type = None
 
-    def __init__(self, ip: str, port: int = 8080):
+    def __init__(self, ip: str, port: int = 8080, username: str = None, password: str = None):
         self._ip = ip
         self._port = port
+        self._username = username
+        self._password = password
 
     def set_default(self):
         """
@@ -25,12 +31,25 @@ class Kodi:
         self.playing = False
         self.type = None
 
+    @property
+    def kodi_url(self):
+        """
+        Returns the Kodi url to be used for the connection. Adds in authentication if applicable.
+
+        :return: URL for the connection.
+        :rtype: str
+        """
+        auth = ""
+        if self._username and self._password:
+            auth = '{_username}:{_password}@'.format(**self.__dict__)
+        return 'http://{auth}{_ip}:{_port}/jsonrpc'.format(auth=auth, **self.__dict__)
+
     def update_stream_information(self):
         """
         Connects to Kodi via json-RPC, and gets the currently played media information.
         """
         try:
-            r = requests.post('http://{_ip}:{_port}/jsonrpc'.format(**self.__dict__), json=[
+            r = requests.post(self.kodi_url, json=[
                 {
                     "jsonrpc": "2.0",
                     "method": "Player.GetProperties",
@@ -83,12 +102,21 @@ class Kodi:
                     "id": "video"
                 }
             ])
+            if r.status_code == 401:
+                ErrorHandler("Authorization has failed for user {username}. "
+                             "Invalid password?".format(username=self._username))
+                raise requests.exceptions.ConnectionError
         except requests.exceptions.ConnectionError:
             self.failed_connection = True
-            print('Could not connect to Kodi instance.')
+            ErrorHandler('Could not connect to Kodi instance.')
         else:
             self.failed_connection = False
-            for j in r.json():
+            try:
+                json_content = r.json()
+            except JSONDecodeError:
+                ErrorHandler('Faulty response ({status}): {response}'.format(status=r.status_code, response=r.text))
+                json_content = []
+            for j in json_content:
                 if j['id'] == 'player':
                     current_time = j['result']['time']
                     total_time = j['result']['totaltime']
@@ -106,7 +134,7 @@ class Kodi:
                     elif item['type'] == 'unknown':
                         self.set_default()
                     else:
-                        print('Unknown type: {type}'.format(type=item['type']))
+                        ErrorHandler('Unknown type: {type}'.format(type=item['type']))
                         self.set_default()
 
     def get_currently_playing_item(self):
