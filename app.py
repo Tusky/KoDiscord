@@ -1,4 +1,5 @@
 import time
+from typing import TYPE_CHECKING
 
 from api.discord_presence import DiscordPresence
 from api.kodi import Kodi
@@ -6,12 +7,15 @@ from util.config import Configurations
 from util.system_tray import SysTray
 
 running = True
+if TYPE_CHECKING:
+    pass
 
 
 class App:
     play_icon = '\u25B6'
     pause_icon = '\u275A\u275A'
     running = True
+    update_rate = 1
 
     def __init__(self, configuration):
         self._config = configuration
@@ -60,12 +64,15 @@ class App:
         discord = DiscordPresence(self._config.client_id)
         kodi = self.get_kodi_connection()
         while self.running:
-            time.sleep(1)  # update every second (no reason to update faster)
+            time.sleep(self.update_rate)
+            if self.update_rate > 1:
+                kodi = self.get_kodi_connection()  # refresh settings, since it was put on timeout
             kodi_info = kodi.get_currently_playing_item()
             if not kodi_info['failed_connection']:
+                self.update_rate = 1
                 self.update_discord(discord, kodi_info)
             else:
-                kodi = self.get_kodi_connection()  # check maybe settings changed meanwhile
+                self.update_rate = 30
 
 
 if __name__ == '__main__':
