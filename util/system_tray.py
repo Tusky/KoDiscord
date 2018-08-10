@@ -1,13 +1,18 @@
+import os
 import threading
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pystray
 from PIL import Image
-
 # Load only for type checking to bypass circular reference error.
+from win32com.client import Dispatch
+
 if TYPE_CHECKING:
     from app import App
     from util.config import Configurations
+
+state = None
 
 
 class SysTray(threading.Thread):
@@ -16,10 +21,12 @@ class SysTray(threading.Thread):
     _config = None
 
     def __init__(self, app: 'App', config: 'Configurations'):
+        global state
         super().__init__()
         self._app = app
         self._config = config
         self.daemon = True
+        state = self._config.auto_start
 
     # noinspection PyUnusedLocal
     def exit_app(self, *args):
@@ -42,6 +49,33 @@ class SysTray(threading.Thread):
         """
         self._config.refresh_settings()
 
+    def get_shortcut_file(self):
+        return os.path.join("C:\\Users\\{username}\\AppData\\Roaming\\Microsoft"
+                            "\\Windows\\Start Menu\\Programs\\Startup".format(username=os.getlogin()),
+                            'KoDiscord.lnk')
+
+    def remove_shortcut(self):
+        shortcut_file = self.get_shortcut_file()
+        os.remove(shortcut_file)
+
+    def create_shortcut(self):
+        shortcut_file = self.get_shortcut_file()
+        path = Path(__file__).parents[2]
+        shortcut = Dispatch('WScript.Shell').CreateShortCut(shortcut_file)
+        shortcut.Targetpath = '{path}\KoDiscord.exe'.format(path=path)
+        shortcut.IconLocation = os.path.join(path, 'kodi-icon.ico')
+        shortcut.save()
+
+    def auto_start_on_boot(self, *args, **kwargs):
+        global state
+        state = not state
+        if state:
+            self.create_shortcut()
+        else:
+            self.remove_shortcut()
+        self._config.change_setting('auto_start', state)
+        self._config.save_settings()
+
     def build_tray(self):
         """
         Creates the system tray icon.
@@ -52,10 +86,13 @@ class SysTray(threading.Thread):
             image = Image.new('RGB', (64, 64))
         menu = pystray.Menu(
             pystray.MenuItem(
-                "Exit", self.exit_app
+                "Autoboot", self.auto_start_on_boot, checked=lambda item: state
             ),
             pystray.MenuItem(
                 "Reload Settings", self.reload_settings,
+            ),
+            pystray.MenuItem(
+                "Exit", self.exit_app
             ),
         )
 

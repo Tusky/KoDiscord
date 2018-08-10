@@ -7,7 +7,8 @@ DEFAULTS = {
     "kodi_ip": "localhost",
     "kodi_port": 8080,
     "kodi_username": "",
-    "kodi_password": ""
+    "kodi_password": "",
+    "auto_start": False
 }
 
 
@@ -29,13 +30,16 @@ class Configurations:
         self.settings = json.loads(self.config_file.read_text(),
                                    object_hook=lambda c: namedtuple('settings', c.keys())(*c.values()))
 
-    def save_settings(self, settings):
+    def save_settings(self, settings=None):
         """
         Saves the current settings into the configuration file.
 
         :param settings: Settings to save.
-        :type settings: dict
+        :type settings: dict or None
         """
+        if not settings:
+            # noinspection PyProtectedMember,PyUnresolvedReferences
+            settings = self.settings._asdict()
         self.config_file.write_text(json.dumps(settings, indent=2, sort_keys=True))
 
     def save_default_settings(self):
@@ -60,3 +64,9 @@ class Configurations:
         :rtype: Any
         """
         return getattr(self.settings, item)
+
+    def change_setting(self, key, value):
+        # noinspection PyProtectedMember,PyUnresolvedReferences
+        setting_dict = self.settings._asdict()
+        setting_dict[key] = value
+        self.settings = namedtuple('settings', setting_dict.keys())(**setting_dict)
