@@ -1,5 +1,7 @@
 import pypresence
 
+from util.error_handling import ErrorHandler
+
 
 class DiscordPresence:
     _client = None
@@ -29,12 +31,20 @@ class DiscordPresence:
                 self._client_id,
                 pipe=self._pipe
             )
-            self._connected = True
-            self._client.connect()
+            try:
+                self._client.connect()
+            except pypresence.exceptions.InvalidPipe as e:
+                ErrorHandler(e.args[0])
+            else:
+                self._connected = True
 
     def update_status(self, state: str, details: str, large_image: str):
         """
         Updates the status of the Discord Rich Presence.
         """
         if self._connected:
-            self._client.update(state=state, details=details, large_image=large_image)
+            try:
+                self._client.update(state=state, details=details, large_image=large_image)
+            except pypresence.exceptions.InvalidID as e:
+                self._connected = False
+                ErrorHandler(e.args[0])
