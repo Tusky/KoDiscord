@@ -8,7 +8,8 @@ DEFAULTS = {
     "kodi_port": 8080,
     "kodi_username": "",
     "kodi_password": "",
-    "auto_start": False
+    "auto_start": False,
+    "kodiscord_port": 80
 }
 
 
@@ -16,6 +17,7 @@ class Configurations:
     config_file_name = 'config.json'
     settings = None
     client_id = 476526847530631168
+    new_settings = False
 
     def __init__(self):
         self.config_file = Path(self.config_file_name)
@@ -69,4 +71,5 @@ class Configurations:
         # noinspection PyProtectedMember,PyUnresolvedReferences
         setting_dict = self.settings._asdict()
         setting_dict[key] = value
+        self.new_settings = True
         self.settings = namedtuple('settings', setting_dict.keys())(**setting_dict)

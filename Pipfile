@@ -8,7 +8,8 @@ pypresence = "*"
 pystray = "*"
 pillow = "*"
 requests = "*"
-cx-freeze = "*"
+cx-freeze = "==6.0b1"
+tornado = "*"
 
 [dev-packages]
 

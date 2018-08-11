@@ -1,13 +1,19 @@
 import os
 import threading
+import webbrowser
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pystray
 from PIL import Image
-# Load only for type checking to bypass circular reference error.
-from win32com.client import Dispatch
 
+try:
+    # noinspection PyUnresolvedReferences
+    from win32com.client import Dispatch
+except ImportError:
+    pass
+
+# Load only for type checking to bypass circular reference error.
 if TYPE_CHECKING:
     from app import App
     from util.config import Configurations
@@ -66,6 +72,7 @@ class SysTray(threading.Thread):
         shortcut.IconLocation = os.path.join(path, 'kodi-icon.ico')
         shortcut.save()
 
+    # noinspection PyUnusedLocal
     def auto_start_on_boot(self, *args, **kwargs):
         global state
         state = not state
@@ -76,6 +83,10 @@ class SysTray(threading.Thread):
         self._config.change_setting('auto_start', state)
         self._config.save_settings()
 
+    # noinspection PyUnusedLocal
+    def open_settings(self, *args, **kwargs):
+        webbrowser.open('http://localhost:{port}'.format(port=self._config.kodiscord_port))
+
     def build_tray(self):
         """
         Creates the system tray icon.
@@ -85,6 +96,9 @@ class SysTray(threading.Thread):
         except FileNotFoundError:
             image = Image.new('RGB', (64, 64))
         menu = pystray.Menu(
+            pystray.MenuItem(
+                "Settings", self.open_settings,
+            ),
             pystray.MenuItem(
                 "Autoboot", self.auto_start_on_boot, checked=lambda item: state
             ),

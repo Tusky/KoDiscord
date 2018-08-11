@@ -1,6 +1,7 @@
 import logging
 
-logging.basicConfig(filename='KoDiscord.log', level=logging.INFO)
+logging.basicConfig(filename='KoDiscord.log', level=logging.INFO,
+                    format='%(asctime)s::%(threadName)-10s::%(levelname)-5s::%(funcName)15s::%(name)-15s:: %(message)s')
 
 
 class ErrorHandler:

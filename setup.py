@@ -14,7 +14,7 @@ packages = ['asyncio', 'idna', 'pypresence', 'requests', 'threading', 'typing', 
 options = {
     'build_exe': {
         'packages': packages,
-        'include_files': ['kodi-icon.ico', 'LICENSE', 'config.json'],
+        'include_files': ['kodi-icon.ico', 'LICENSE', 'config.json', 'web'],
         'include_msvcr': True
     },
 }
@@ -22,7 +22,7 @@ options = {
 setup(
     name="KoDiscord",
     options=options,
-    version="0.3",
+    version="0.5",
     description='Sends your currently watched Movie or TV Show from Kodi to discord.',
     executables=executables
 )

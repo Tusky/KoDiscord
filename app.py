@@ -5,6 +5,7 @@ from api.discord_presence import DiscordPresence
 from api.kodi import Kodi
 from util.config import Configurations
 from util.system_tray import SysTray
+from util.web_interface import WebInterface
 
 running = True
 if TYPE_CHECKING:
@@ -65,7 +66,10 @@ class App:
         kodi = self.get_kodi_connection()
         while self.running:
             time.sleep(self.update_rate)
-            if self.update_rate > 1:
+            if config.new_settings:
+                kodi = self.get_kodi_connection()
+                config.new_settings = False
+            elif self.update_rate > 1:
                 kodi = self.get_kodi_connection()  # refresh settings, since it was put on timeout
             kodi_info = kodi.get_currently_playing_item()
             if not kodi_info['failed_connection']:
@@ -77,7 +81,9 @@ class App:
 
 if __name__ == '__main__':
     config = Configurations()
-    app = App(config)
-    sys_tray = SysTray(app, config)
+    kodiscord = App(config)
+    sys_tray = SysTray(kodiscord, config)
     sys_tray.start()
-    app.run()
+    web = WebInterface(config)
+    web.start()
+    kodiscord.run()
