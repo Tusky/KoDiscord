@@ -102,6 +102,10 @@ class Kodi:
                     "id": "video"
                 }
             ])
+            for response in r.json():
+                if 'error' in response:
+                    ErrorHandler(response['error'].get('message', 'No message'))
+                    raise requests.exceptions.ConnectionError
             if r.status_code == 401:
                 ErrorHandler("Authorization has failed for user {username}. "
                              "Invalid password?".format(username=self._username))

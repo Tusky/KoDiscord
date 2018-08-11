@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block css %}
+<style>
+    pre {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        overflow: auto;
+        overflow-y: hidden;
+        font-size: 12px;
+        line-height: 20px;
+        background: #efefef;
+        border: 1px solid #777;
+    }
+
+    pre code {
+        padding: 10px;
+        color: #333;
+    }
+</style>
+{% end %}
+
+{% block content %}
+<pre><code>{% for log in logs %}{{ log }}<br/>{% end %}</code></pre>{% end %}

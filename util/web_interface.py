@@ -1,5 +1,6 @@
 import asyncio
 import threading
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import tornado.ioloop
@@ -45,8 +46,28 @@ class WebInterface(threading.Thread):
                 config.save_settings()
                 self.get(saved=True)
 
+        class LogHandler(tornado.web.RequestHandler):
+            def data_received(self, chunk):
+                pass
+
+            def get(self, saved=False):
+                try:
+                    logs = Path('KoDiscord.log').read_text().split('\n')
+                except FileNotFoundError:
+                    logs = ['', 'No logs have been found.', '']
+                else:
+                    logs.reverse()
+                    logs = [x.strip() for x in logs if "MainThread" in x]
+                    logs.insert(0, '')
+                    logs.append('')
+                template_kwargs = {
+                    'logs': logs,
+                }
+                self.write(loader.load("logs.html").generate(**template_kwargs))
+
         return tornado.web.Application([
             (r"/", ConfigurationHandler),
+            (r"/logs/", LogHandler),
         ])
 
     def run(self):
