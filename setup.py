@@ -1,4 +1,5 @@
 import os.path
+from pathlib import Path
 
 from cx_Freeze import setup, Executable
 
@@ -8,21 +9,28 @@ os.environ['TK_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tk8.6')
 
 base = 'Win32GUI'
 
-executables = [Executable('app.py', base=base, icon='kodi-icon.ico', targetName="KoDiscord.exe")]
+kodiscord = Executable('app.py', base=base, icon='kodi-icon.ico', targetName="KoDiscord.exe")
+updater = Executable('updater.py', base=None, icon='kodi-icon.ico', targetName='KoDiscord-updater.exe')
 
-packages = ['asyncio', 'idna', 'pypresence', 'requests', 'threading', 'typing', 'pystray', 'PIL']
+executables = [kodiscord, updater]
+
+packages = ['asyncio', 'idna', 'pypresence', 'requests', 'threading', 'typing', 'pystray', 'PIL', 'pkg_resources']
 options = {
     'build_exe': {
         'packages': packages,
-        'include_files': ['kodi-icon.ico', 'LICENSE', 'config.json', 'web'],
+        'include_files': ['kodi-icon.ico', 'LICENSE', 'config.json', 'web', 'version', 'updater.bat'],
         'include_msvcr': True
     },
 }
+version = Path('version').read_text().strip()
 
 setup(
     name="KoDiscord",
     options=options,
-    version="0.5",
+    version=version,
+    author='Richard Hajdu',
+    author_email='tuskone16@gmail.com',
+    url='https://github.com/Tusky/KoDiscord',
     description='Sends your currently watched Movie or TV Show from Kodi to discord.',
     executables=executables
 )

@@ -1,8 +1,10 @@
+import subprocess
 import time
 from typing import TYPE_CHECKING
 
 from api.discord_presence import DiscordPresence
 from api.kodi import Kodi
+from updater import Updater
 from util.config import Configurations
 from util.system_tray import SysTray
 from util.web_interface import WebInterface
@@ -80,10 +82,17 @@ class App:
 
 
 if __name__ == '__main__':
-    config = Configurations()
-    kodiscord = App(config)
-    sys_tray = SysTray(kodiscord, config)
-    sys_tray.start()
-    web = WebInterface(config)
-    web.start()
-    kodiscord.run()
+    updater = Updater()
+    if updater.is_there_an_update():
+        try:
+            subprocess.Popen(['KoDiscord-updater.exe'], creationflags=subprocess.CREATE_NEW_CONSOLE)
+        except FileNotFoundError:
+            pass
+    else:
+        config = Configurations()
+        kodiscord = App(config)
+        sys_tray = SysTray(kodiscord, config)
+        sys_tray.start()
+        web = WebInterface(config)
+        web.start()
+        kodiscord.run()
