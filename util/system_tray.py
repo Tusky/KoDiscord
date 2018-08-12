@@ -55,7 +55,8 @@ class SysTray(threading.Thread):
         """
         self._config.refresh_settings()
 
-    def get_shortcut_file(self):
+    @staticmethod
+    def get_shortcut_file():
         return os.path.join("C:\\Users\\{username}\\AppData\\Roaming\\Microsoft"
                             "\\Windows\\Start Menu\\Programs\\Startup".format(username=os.getlogin()),
                             'KoDiscord.lnk')
