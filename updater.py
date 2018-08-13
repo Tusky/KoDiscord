@@ -21,9 +21,13 @@ class Updater:
         self.local_version = parse_version(Path('version').read_text().strip())
 
     def get_remote_version(self):
-        data = requests.get('https://api.github.com/repos/Tusky/KoDiscord/releases/latest').json()
-        self.download_url = data['assets'][0]['browser_download_url']
-        self.remote_version = parse_version(data['tag_name'])
+        try:
+            data = requests.get('https://api.github.com/repos/Tusky/KoDiscord/releases/latest').json()
+        except requests.exceptions.ConnectionError:
+            self.remote_version = self.local_version
+        else:
+            self.download_url = data['assets'][0]['browser_download_url']
+            self.remote_version = parse_version(data['tag_name'])
 
     def is_there_an_update(self):
         return self.local_version < self.remote_version
