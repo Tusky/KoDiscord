@@ -38,13 +38,13 @@ class DiscordPresence:
             else:
                 self._connected = True
 
-    def update_status(self, state: str, details: str, large_image: str):
+    def update_status(self, state: str, details: str, large_image: str, end: int = None):
         """
         Updates the status of the Discord Rich Presence.
         """
         if self._connected:
             try:
-                self._client.update(state=state, details=details, large_image=large_image)
+                self._client.update(state=state, details=details, large_image=large_image, end=end)
             except pypresence.exceptions.InvalidID as e:
                 self._connected = False
                 ErrorHandler(e.args[0])

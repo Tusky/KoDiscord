@@ -1,3 +1,4 @@
+import json
 import subprocess
 import time
 from typing import TYPE_CHECKING
@@ -11,7 +12,7 @@ from util.web_interface import WebInterface
 
 running = True
 if TYPE_CHECKING:
-    pass
+    import datetime
 
 
 class App:
@@ -19,6 +20,7 @@ class App:
     pause_icon = '\u275A\u275A'
     running = True
     update_rate = 1
+    last_state = '{}'
 
     def __init__(self, configuration):
         self._config = configuration
@@ -39,10 +41,12 @@ class App:
         return Kodi(self._config.kodi_ip, self._config.kodi_port, self._config.kodi_username,
                     self._config.kodi_password)
 
-    def update_discord(self, discord: DiscordPresence, play_info: dict):
+    def update_discord(self, discord: DiscordPresence, play_info: dict, remaining_time: 'datetime.timedelta' = None):
         """
         Updates the Discord Rich Presence display.
 
+        :param remaining_time: The remaining time timedelta if paused.
+        :type remaining_time: datetime.timedelta
         :param discord: Discord connection.
         :type discord: DiscordPresence
         :param play_info: Information about the movie/show.
@@ -50,13 +54,19 @@ class App:
         """
         if play_info.get('title') is not None:
             discord.connect()
-            icon = '{icon}'.format(icon=self.play_icon if play_info['playing'] else self.pause_icon)
-            time_format = '{time[0]}:{time[1]:02d}:{time[2]:02d}'
-            formatted_time = time_format.format(time=play_info['current_time'])
-            formatted_total_time = time_format.format(time=play_info['total_time'])
-            discord.update_status(details='{title}'.format(**play_info), large_image=play_info['type'],
-                                  state='{icon} {time}/{total_time}'.format(icon=icon, time=formatted_time,
-                                                                            total_time=formatted_total_time))
+            if play_info['playing']:
+                icon = self.play_icon
+                state = None
+                end = play_info['end_time']
+            else:
+                icon = self.pause_icon
+                state = '{time_remaining} left'.format(icon=icon, time_remaining=time.strftime('%H:%M:%S', time.gmtime(
+                    remaining_time.seconds
+                )))
+                end = None
+            discord.update_status(details='{icon} {title}'.format(icon=icon, **play_info),
+                                  large_image=play_info['type'],
+                                  state=state, end=end)
         else:
             discord.disconnect()
 
@@ -75,10 +85,12 @@ class App:
                 kodi = self.get_kodi_connection()  # refresh settings, since it was put on timeout
             kodi_info = kodi.get_currently_playing_item()
             if not kodi_info['failed_connection']:
-                self.update_rate = 1
-                self.update_discord(discord, kodi_info)
-            else:
-                self.update_rate = 30
+                remaining_time = kodi_info.pop('remaining_time')
+                kodi_info_json = json.dumps(kodi_info)
+                if self.last_state != kodi_info_json:
+                    if json.loads(self.last_state).get('playing') != json.loads(kodi_info_json).get('playing'):
+                        self.update_discord(discord, kodi_info, remaining_time)
+                        self.last_state = kodi_info_json
 
 
 if __name__ == '__main__':

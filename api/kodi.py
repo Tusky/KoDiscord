@@ -1,3 +1,4 @@
+import datetime
 from json import JSONDecodeError
 
 import requests
@@ -6,8 +7,8 @@ from util.error_handling import ErrorHandler
 
 
 class Kodi:
-    current_time = [0, 0, 0]
-    total_time = [0, 0, 0]
+    remaining_time = None
+    end_time = None
     title = None
     year = None
     playing = False
@@ -24,8 +25,8 @@ class Kodi:
         """
         Sets the default values, in case there is an error.
         """
-        self.current_time = [0, 0, 0]
-        self.total_time = [0, 0, 0]
+        self.remaining_time = None
+        self.end_time = None
         self.title = None
         self.year = None
         self.playing = False
@@ -124,8 +125,13 @@ class Kodi:
                 if j['id'] == 'player':
                     current_time = j['result']['time']
                     total_time = j['result']['totaltime']
-                    self.current_time = [current_time['hours'], current_time['minutes'], current_time['seconds']]
-                    self.total_time = [total_time['hours'], total_time['minutes'], total_time['seconds']]
+                    now = datetime.datetime.now()
+                    self.end_time = int((now + datetime.timedelta(
+                        hours=total_time['hours'] - current_time['hours'],
+                        minutes=total_time['minutes'] - current_time['minutes'],
+                        seconds=total_time['seconds'] - current_time['seconds']
+                    )).timestamp())
+                    self.remaining_time = datetime.timedelta(seconds=self.end_time - int(now.timestamp()))
                     self.playing = j['result']['speed'] == 1
                 elif j['id'] == 'video':
                     item = j['result']['item']
