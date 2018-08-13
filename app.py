@@ -88,7 +88,9 @@ class App:
                 remaining_time = kodi_info.pop('remaining_time')
                 kodi_info_json = json.dumps(kodi_info)
                 if self.last_state != kodi_info_json:
-                    if json.loads(self.last_state).get('playing') != json.loads(kodi_info_json).get('playing'):
+                    last_state = json.loads(self.last_state)
+                    if last_state.get('playing') != kodi_info.get('playing') or not kodi_info.get('title') \
+                            or last_state.get('end_time') != kodi_info.get('end_time'):
                         self.update_discord(discord, kodi_info, remaining_time)
                         self.last_state = kodi_info_json
 
