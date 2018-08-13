@@ -34,7 +34,8 @@ class WebInterface(threading.Thread):
                     'port': config.kodi_port,
                     'username': config.kodi_username,
                     'password': config.kodi_password,
-                    'saved': saved
+                    'saved': saved,
+                    'version': Path('version').read_text().strip()
                 }
                 self.write(loader.load("config.html").generate(**template_kwargs))
 
@@ -62,6 +63,7 @@ class WebInterface(threading.Thread):
                     logs.append('')
                 template_kwargs = {
                     'logs': logs,
+                    'version': Path('version').read_text().strip()
                 }
                 self.write(loader.load("logs.html").generate(**template_kwargs))
 

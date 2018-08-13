@@ -98,6 +98,10 @@ class SysTray(threading.Thread):
             image = Image.new('RGB', (64, 64))
         menu = pystray.Menu(
             pystray.MenuItem(
+                "KoDiscord v{version}".format(version=Path('version').read_text().strip()), self.reload_settings,
+                enabled=False
+            ),
+            pystray.MenuItem(
                 "Settings", self.open_settings,
             ),
             pystray.MenuItem(
