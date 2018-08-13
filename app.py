@@ -60,9 +60,11 @@ class App:
                 end = play_info['end_time']
             else:
                 icon = self.pause_icon
-                state = '{time_remaining} left'.format(icon=icon, time_remaining=time.strftime('%H:%M:%S', time.gmtime(
-                    remaining_time.seconds
-                )))
+                if remaining_time.seconds > 3600:
+                    time_remaining = time.strftime('%H:%M:%S', time.gmtime(remaining_time.seconds))
+                else:
+                    time_remaining = time.strftime('%M:%S', time.gmtime(remaining_time.seconds))
+                state = '{time_remaining} left'.format(icon=icon, time_remaining=time_remaining)
                 end = None
             discord.update_status(details='{icon} {title}'.format(icon=icon, **play_info),
                                   large_image=play_info['type'],
