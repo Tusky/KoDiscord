@@ -3,6 +3,8 @@ from collections import namedtuple
 from pathlib import Path
 
 # Default settings to be used.
+from util.system_tray import SysTray
+
 DEFAULTS = {
     "kodi_ip": "localhost",
     "kodi_port": 8080,
@@ -48,6 +50,7 @@ class Configurations:
         """
         Saves the default settings in case config.json file is missing.
         """
+        DEFAULTS['auto_start'] = Path(SysTray.get_shortcut_file()).exists()
         self.save_settings(DEFAULTS)
 
     def refresh_settings(self):

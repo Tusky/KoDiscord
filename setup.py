@@ -18,7 +18,7 @@ packages = ['asyncio', 'idna', 'pypresence', 'requests', 'threading', 'typing', 
 options = {
     'build_exe': {
         'packages': packages,
-        'include_files': ['kodi-icon.ico', 'LICENSE', 'config.json', 'web', 'version', 'updater.bat'],
+        'include_files': ['kodi-icon.ico', 'LICENSE', 'web', 'version', 'updater.bat'],
         'include_msvcr': True
     },
 }
