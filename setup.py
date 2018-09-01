@@ -27,7 +27,7 @@ version = Path('version').read_text().strip()
 setup(
     name="KoDiscord",
     options=options,
-    version=version,
+    version=version.replace('b', '.'),
     author='Richard Hajdu',
     author_email='tuskone16@gmail.com',
     url='https://github.com/Tusky/KoDiscord',

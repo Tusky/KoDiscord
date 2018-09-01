@@ -142,7 +142,15 @@ class Kodi:
                     elif item['type'] == 'episode':
                         self.title = '{showtitle} {season}x{episode:02d}'.format(**item)
                     elif item['type'] == 'unknown':
-                        self.set_default()
+                        if not item.get('title') and not item.get('label'):
+                            self.set_default()
+                        if 'googlevideo.com' in item['file']:
+                            self.type = 'Youtube'
+                        elif 'ttvnw.net' in item['file']:
+                            self.type = 'Twitch'
+                        title = item.get('title') or item.get('label')
+                        self.title = '{type}: {title}'.format(type='Addon' if self.type == 'unknown' else self.type,
+                                                              title=title)
                     else:
                         ErrorHandler('Unknown type: {type}'.format(type=item['type']))
                         self.set_default()

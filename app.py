@@ -1,7 +1,7 @@
+import datetime
 import json
 import subprocess
 import time
-from typing import TYPE_CHECKING
 
 from api.discord_presence import DiscordPresence
 from api.kodi import Kodi
@@ -11,8 +11,6 @@ from util.system_tray import SysTray
 from util.web_interface import WebInterface
 
 running = True
-if TYPE_CHECKING:
-    import datetime
 
 
 class App:
@@ -41,7 +39,8 @@ class App:
         return Kodi(self._config.kodi_ip, self._config.kodi_port, self._config.kodi_username,
                     self._config.kodi_password)
 
-    def update_discord(self, discord: DiscordPresence, play_info: dict, remaining_time: 'datetime.timedelta' = None):
+    def update_discord(self, discord: DiscordPresence, play_info: dict,
+                       remaining_time: 'datetime.timedelta' = None):
         """
         Updates the Discord Rich Presence display.
 
@@ -52,7 +51,7 @@ class App:
         :param play_info: Information about the movie/show.
         :type play_info: dict
         """
-        if play_info.get('title') is not None:
+        if play_info.get('title') is not None and remaining_time is not None:
             discord.connect()
             if play_info['playing']:
                 icon = self.play_icon
