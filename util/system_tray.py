@@ -1,11 +1,12 @@
 import os
+import pystray
 import threading
 import webbrowser
-from pathlib import Path
+from PIL import Image
 from typing import TYPE_CHECKING
 
-import pystray
-from PIL import Image
+from updater import Updater
+from util.config import Configurations, BASE_DIR
 
 try:
     # noinspection PyUnresolvedReferences
@@ -16,7 +17,6 @@ except ImportError:
 # Load only for type checking to bypass circular reference error.
 if TYPE_CHECKING:
     from app import App
-    from util.config import Configurations
 
 state = None
 
@@ -67,10 +67,9 @@ class SysTray(threading.Thread):
 
     def create_shortcut(self):
         shortcut_file = self.get_shortcut_file()
-        path = Path(__file__).parents[2]
         shortcut = Dispatch('WScript.Shell').CreateShortCut(shortcut_file)
-        shortcut.Targetpath = '{path}\KoDiscord.exe'.format(path=path)
-        shortcut.IconLocation = os.path.join(path, 'kodi-icon.ico')
+        shortcut.Targetpath = f'{BASE_DIR}\KoDiscord.exe'
+        shortcut.IconLocation = os.path.join(BASE_DIR, 'kodi-icon.ico')
         shortcut.save()
 
     # noinspection PyUnusedLocal
@@ -93,12 +92,12 @@ class SysTray(threading.Thread):
         Creates the system tray icon.
         """
         try:
-            image = Image.open('kodi-icon.ico')
+            image = Image.open(f'{BASE_DIR}\kodi-icon.ico')
         except FileNotFoundError:
             image = Image.new('RGB', (64, 64))
         menu = pystray.Menu(
             pystray.MenuItem(
-                "KoDiscord v{version}".format(version=Path('version').read_text().strip()), self.reload_settings,
+                "KoDiscord v{version}".format(version=Updater.version), self.reload_settings,
                 enabled=False
             ),
             pystray.MenuItem(

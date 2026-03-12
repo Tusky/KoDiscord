@@ -1,16 +1,15 @@
 import asyncio
+import os
 import threading
-from pathlib import Path
-from typing import TYPE_CHECKING
-
 import tornado.ioloop
 import tornado.web
+from pathlib import Path
 from tornado import template
 
-loader = template.Loader('web/template/')
+from updater import Updater
+from util.config import Configurations
 
-if TYPE_CHECKING:
-    from util.config import Configurations
+loader = template.Loader('web/template/')
 
 
 class WebInterface(threading.Thread):
@@ -35,7 +34,7 @@ class WebInterface(threading.Thread):
                     'username': config.kodi_username,
                     'password': config.kodi_password,
                     'saved': saved,
-                    'version': Path('version').read_text().strip()
+                    'version': Updater.version
                 }
                 self.write(loader.load("config.html").generate(**template_kwargs))
 
@@ -53,7 +52,7 @@ class WebInterface(threading.Thread):
 
             def get(self, saved=False):
                 try:
-                    logs = Path('KoDiscord.log').read_text().split('\n')
+                    logs = Path(f"{os.environ.get('LOCALAPPDATA')}\KoDiscord\KoDiscord.log").read_text().split('\n')
                 except FileNotFoundError:
                     logs = ['', 'No logs have been found.', '']
                 else:
@@ -63,7 +62,7 @@ class WebInterface(threading.Thread):
                     logs.append('')
                 template_kwargs = {
                     'logs': logs,
-                    'version': Path('version').read_text().strip()
+                    'version': Updater.version
                 }
                 self.write(loader.load("logs.html").generate(**template_kwargs))
 
@@ -75,5 +74,5 @@ class WebInterface(threading.Thread):
     def run(self):
         asyncio.set_event_loop(asyncio.new_event_loop())
         app = self.web_interface()
-        app.listen(8888)
+        app.listen(Configurations().kodiscord_port)
         tornado.ioloop.IOLoop.instance().start()

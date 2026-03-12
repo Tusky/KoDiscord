@@ -1,7 +1,6 @@
 import datetime
-from json import JSONDecodeError
-
 import requests
+from json import JSONDecodeError
 
 from util.error_handling import ErrorHandler
 
@@ -105,6 +104,8 @@ class Kodi:
             ])
             for response in r.json():
                 if 'error' in response:
+                    if response['error'].get('code') == -32601:
+                        raise ConnectionError('Nope.')
                     ErrorHandler(response['error'].get('message', 'No message'))
                     raise requests.exceptions.ConnectionError
             if r.status_code == 401:
@@ -114,6 +115,9 @@ class Kodi:
         except requests.exceptions.ConnectionError:
             self.failed_connection = True
             ErrorHandler('Could not connect to Kodi instance.')
+        except ConnectionError:  # Catch useless error.
+            self.failed_connection = True
+            return
         else:
             self.failed_connection = False
             try:

@@ -1,7 +1,7 @@
 import os.path
-from pathlib import Path
-
 from cx_Freeze import setup, Executable
+
+from updater import Updater
 
 PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
 os.environ['TCL_LIBRARY'] = os.path.join(PYTHON_INSTALL_DIR, 'tcl', 'tcl8.6')
@@ -22,7 +22,7 @@ options = {
         'include_msvcr': True
     },
 }
-version = Path('version').read_text().strip()
+version = Updater.version
 
 setup(
     name="KoDiscord",

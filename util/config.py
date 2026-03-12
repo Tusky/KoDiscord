@@ -1,10 +1,9 @@
 import json
+import os
 from collections import namedtuple
 from pathlib import Path
 
 # Default settings to be used.
-from util.system_tray import SysTray
-
 DEFAULTS = {
     "kodi_ip": "localhost",
     "kodi_port": 8080,
@@ -14,6 +13,10 @@ DEFAULTS = {
     "kodiscord_port": 80
 }
 
+BASE_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+if '\\lib\\' in BASE_DIR:
+    BASE_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+
 
 class Configurations:
     config_file_name = 'config.json'
@@ -22,7 +25,7 @@ class Configurations:
     new_settings = False
 
     def __init__(self):
-        self.config_file = Path(self.config_file_name)
+        self.config_file = Path(f'{BASE_DIR}\\{self.config_file_name}')
         if not self.config_file.exists():
             self.save_default_settings()
         self.load_settings()
@@ -50,6 +53,7 @@ class Configurations:
         """
         Saves the default settings in case config.json file is missing.
         """
+        from util.system_tray import SysTray
         DEFAULTS['auto_start'] = Path(SysTray.get_shortcut_file()).exists()
         self.save_settings(DEFAULTS)
 

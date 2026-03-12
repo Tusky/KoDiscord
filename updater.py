@@ -1,8 +1,7 @@
+import requests
 import subprocess
 import zipfile
 from pathlib import Path
-
-import requests
 from pkg_resources import parse_version
 
 
@@ -11,6 +10,7 @@ class Updater:
     remote_version = None
     local_version = None
     file = None
+    version = '0.6.8'
 
     def __init__(self):
         self.get_local_version()
@@ -18,7 +18,7 @@ class Updater:
         self.get_filename()
 
     def get_local_version(self):
-        self.local_version = parse_version(Path('version').read_text().strip())
+        self.local_version = parse_version(self.version)
 
     def get_remote_version(self):
         try:
@@ -33,9 +33,10 @@ class Updater:
         return self.local_version < self.remote_version
 
     def get_filename(self):
-        folder = Path('update')
+        from util.config import BASE_DIR
+        folder = Path(f'{BASE_DIR}\\update')
         if not folder.exists():
-            folder.mkdir()
+            folder.mkdir(exist_ok=True)
         self.file = folder / self.download_url.split('/')[-1]
 
     def download_package(self):
