@@ -9,7 +9,8 @@
 [![Documentation Status](https://readthedocs.org/projects/kodiscord/badge/?version=latest&style=flat)](http://kodiscord.readthedocs.io/?badge=latest)
 
 [![GitHub release](https://img.shields.io/github/release/Tusky/KoDiscord.svg?style=flat-square)](https://github.com/Tusky/KoDiscord)
-[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
+[![GitHub downloads](https://img.shields.io/github/downloads/Tusky/KoDiscord/total.svg?style=flat-square)](https://github.com/Tusky/KoDiscord)
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat-square)](http://perso.crans.org/besson/LICENSE.html)
 
 This small application sits in your system tray, and watches Kodi's currently played media.
 If it happens to notice a `movie` or `episode` to be playing it sets your Discord status to `movie` or `episode`.
